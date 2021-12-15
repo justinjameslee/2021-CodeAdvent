@@ -43,8 +43,15 @@ flagged = []
 index = 0
 
 done = None
-winningcard = 0
+woncards = 0
+sumwoncards = 0
 winningnum = 0
+lencards = len(data)
+sumcards = sum(range(len(data)+1))
+
+indexofcards = np.array(list(range(len(data))))
+x = []
+indexofwoncards = np.array(x)
 
 while index < len(input) and done == None:
     card = 0
@@ -56,7 +63,7 @@ while index < len(input) and done == None:
         card += 1
 
     test = 0
-    while test < len(data):
+    while test < len(data) and done == None:
         testTemp = []
         test2 = 0
         while test2 < len(flagged):
@@ -66,33 +73,34 @@ while index < len(input) and done == None:
             test2 += 1
 
         conlen = 0
-        while conlen < len(conditions):
+        while conlen < len(conditions) and done == None:
             testTemp = np.array(testTemp)
             # if np.in1d(conditions[conlen].ravel(), testTemp.ravel()).all():
             if set(np.unique(conditions[conlen])).issubset(set(np.unique(testTemp))):
-                winningcard = test
-                winningnum = input[index]
-                done = True
+                if set(np.unique(indexofcards)).issubset(set(np.unique(indexofwoncards))):
+                    losingcard = int(indexofwoncards[len(indexofwoncards)-1])
+                    done = True
+                else:
+                    winningnum = input[index]
+                    indexofwoncards = np.append(indexofwoncards,int(test))
             conlen += 1
         test+=1
     index += 1
 
-
-winningflagged = []
+lostflagged = []
 for index in range(len(flagged)):
-    if flagged[index][0] == winningcard:
-        winningflagged.append(flagged[index][1])
+    if flagged[index][0] == losingcard:
+        lostflagged.append(flagged[index][1])
 
 count = 0
 flaggedsum = 0
-while count < len(winningflagged):
-    print(data[winningcard][winningflagged[count][0]])
-    print(winningflagged[count][1])
-    flaggedsum += int(data[winningcard][winningflagged[count][0]][winningflagged[count][1]])
+while count < len(lostflagged):
+    print(data[losingcard][lostflagged[count][0]])
+    print(lostflagged[count][1])
+    flaggedsum += int(data[losingcard][lostflagged[count][0]][lostflagged[count][1]])
     count += 1
 
-intdata = [list(map(int,i)) for i in data[winningcard]]
-print(intdata)
+intdata = [list(map(int,i)) for i in data[losingcard]]
 
 totalsum = sum(sum(intdata,[]))
 unmarked = totalsum - flaggedsum
